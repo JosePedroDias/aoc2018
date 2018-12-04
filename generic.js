@@ -4,7 +4,7 @@ function fileAsLines(fileName) {
   return fs
     .readFileSync(fileName)
     .toString()
-    .split('\r\n');
+    .split('\n'); // \n \r\n
 }
 
 function cloneArray(arr) {
