@@ -5,7 +5,9 @@ const {
   doTokensReact,
   doReactions,
   getUniqueTokenKinds,
-  removeTokensOfKind
+  removeTokensOfKind,
+  question1,
+  question2
 } = require('./05');
 const { fileAsLines } = require('./generic');
 
@@ -74,7 +76,8 @@ it('doReactions', () => {
 });
 
 it('question 1', () => {
-  expect(reducePolymerString(POLYMER_STRING).length).toEqual(9386); // 50000 => 936
+  const len = question1(POLYMER_STRING);
+  expect(len).toEqual(9386);
 });
 
 it('getUniqueTokenKinds', () => {
@@ -102,18 +105,6 @@ it('examples 2', () => {
 });
 
 it('question 2', () => {
-  const polymer = tokenize(POLYMER_STRING);
-  const kinds = getUniqueTokenKinds(polymer);
-  // console.log('kinds', kinds);
-  let minLength = Number.MAX_SAFE_INTEGER;
-  kinds.forEach((kind) => {
-    const polymerWoKind = removeTokensOfKind(polymer, kind);
-    const reducedPolymer = doReactions(polymerWoKind);
-    const len = reducedPolymer.length;
-    // console.log(kind, len);
-    if (len < minLength) {
-      minLength = len;
-    }
-  });
+  const minLength = question2(POLYMER_STRING);
   expect(minLength).toEqual(4876);
 });

@@ -36,7 +36,7 @@ function doReactions(polymer_) {
     if (doTokensReact(a, b)) {
       polymer = clonedArrayWithoutIndices(polymer, index, 2);
       l -= 2;
-      index = 0;
+      index = Math.max(0, index - 1);
     } else {
       ++index;
     }
@@ -58,6 +58,49 @@ function removeTokensOfKind(polymer, kind) {
   });
 }
 
+function question1(polymerS) {
+  const polymer = tokenize(polymerS);
+  return untokenize(doReactions(polymer)).length;
+}
+
+function question2(polymerS) {
+  const polymer = tokenize(polymerS);
+  const kinds = getUniqueTokenKinds(polymer);
+  // console.log('kinds', kinds);
+  let minLength = Number.MAX_SAFE_INTEGER;
+  kinds.forEach((kind) => {
+    const polymerWoKind = removeTokensOfKind(polymer, kind);
+    const reducedPolymer = doReactions(polymerWoKind);
+    const len = reducedPolymer.length;
+    // console.log(kind, len);
+    if (len < minLength) {
+      minLength = len;
+    }
+  });
+  return minLength;
+}
+
+(function answerQuestions() {
+  // return;
+
+  const { fileAsLines } = require('./generic');
+  const POLYMER_STRING = fileAsLines('./05.input.txt')[0];
+
+  console.time('all');
+
+  console.time('1');
+  const len = question1(POLYMER_STRING);
+  console.log(1, len);
+  console.timeEnd('1');
+
+  console.time('2');
+  const minLength = question2(POLYMER_STRING);
+  console.log(2, minLength);
+  console.timeEnd('2');
+
+  console.timeEnd('all');
+})();
+
 module.exports = {
   isLowerCase,
   tokenize,
@@ -65,5 +108,7 @@ module.exports = {
   doTokensReact,
   doReactions,
   getUniqueTokenKinds,
-  removeTokensOfKind
+  removeTokensOfKind,
+  question1,
+  question2
 };
