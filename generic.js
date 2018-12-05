@@ -40,11 +40,25 @@ function clonedArrayWithoutIndices(
   return arr2;
 }
 
+function combinations22(n) {
+  let i, j;
+  const arr = [];
+  for (i = 0; i < n - 1; ++i) {
+    for (j = 1; j < n; ++j) {
+      if (i < j) {
+        arr.push([i, j]);
+      }
+    }
+  }
+  return arr;
+}
+
 module.exports = {
   fileAsLines,
   cloneArray,
   cloneSet,
   cloneMap,
   mapFromObj,
-  clonedArrayWithoutIndices
+  clonedArrayWithoutIndices,
+  combinations22
 };

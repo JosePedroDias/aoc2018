@@ -1,4 +1,10 @@
-const { histogram, checksum, addPairs } = require('./02');
+const {
+  histogram,
+  checksum,
+  addPairs,
+  diffsOneCharPos,
+  question2
+} = require('./02');
 const { fileAsLines, mapFromObj } = require('./generic');
 
 const IDS = fileAsLines('./02.input.txt');
@@ -25,9 +31,9 @@ it('checksum', () => {
   expect(checksum('bababc')).toEqual([1, 1]);
   expect(checksum('abbcde')).toEqual([1, 0]);
   expect(checksum('abcccd')).toEqual([0, 1]);
-  expect(checksum('aabcdd')).toEqual([2, 0]);
+  expect(checksum('aabcdd')).toEqual([1, 0]);
   expect(checksum('abcdee')).toEqual([1, 0]);
-  expect(checksum('ababab')).toEqual([0, 2]);
+  expect(checksum('ababab')).toEqual([0, 1]);
 });
 
 it('addPairs', () => {
@@ -37,7 +43,30 @@ it('addPairs', () => {
 it('question 1', () => {
   const checks = IDS.map(checksum);
   const arr = checks.reduce(addPairs, [0, 0]);
-  // console.log(`2s: ${arr[0]}, 3s: ${arr[1]}`);
   const checkSum = arr[0] * arr[1];
-  expect(checkSum).toBe(15528); // 647 * 24 TOO HIGH
+  expect(checkSum).toBe(5904);
+});
+
+it('diffsOneCharPos', () => {
+  expect(diffsOneCharPos('qweqwe', 'qweqwe')).toBe(undefined);
+  expect(diffsOneCharPos('qweqwe', 'qweXwe')).toBe(3);
+  expect(diffsOneCharPos('qweqwe', 'qweXwX')).toBe(undefined);
+});
+
+it('example 2', () => {
+  const res = question2([
+    'abcde',
+    'fghij',
+    'klmno',
+    'pqrst',
+    'fguij',
+    'axcye',
+    'wvxyz'
+  ]);
+  expect(res).toBe('fgij');
+});
+
+it('question 2', () => {
+  const res = question2(IDS);
+  expect(res).toBe('jiwamotgsfrudclzbyzkhlrvp');
 });
