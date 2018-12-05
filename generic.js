@@ -21,9 +21,19 @@ function cloneMap(map) {
   return new Map(arr);
 }
 
+function mapFromObj(obj) {
+  const map = new Map();
+  const keys = Object.keys(obj);
+  for (let k of keys) {
+    map.set(k, obj[k]);
+  }
+  return map;
+}
+
 module.exports = {
   fileAsLines,
   cloneArray,
   cloneSet,
-  cloneMap
+  cloneMap,
+  mapFromObj
 };
