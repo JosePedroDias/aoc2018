@@ -46,7 +46,7 @@ it('ex 2.1', () => {
   expect(f2(0, [1, -2, 3, 1])).toBe(2);
 });
 
-xit('ex 2.2', () => {
+it('ex 2.2', () => {
   expect(f2(0, [1, -1])).toBe(0);
 });
 
@@ -63,5 +63,5 @@ it('ex 1.5', () => {
 });
 
 it('question 2', () => {
-  expect(f2(0, CHANGES)).toBe(0);
+  expect(f2(0, CHANGES)).toBe(655);
 });
