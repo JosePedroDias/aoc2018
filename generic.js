@@ -30,10 +30,21 @@ function mapFromObj(obj) {
   return map;
 }
 
+function clonedArrayWithoutIndices(
+  arr,
+  startIndexToRemove,
+  numberOfIndicesToRemove
+) {
+  const arr2 = arr.slice();
+  arr2.splice(startIndexToRemove, numberOfIndicesToRemove);
+  return arr2;
+}
+
 module.exports = {
   fileAsLines,
   cloneArray,
   cloneSet,
   cloneMap,
-  mapFromObj
+  mapFromObj,
+  clonedArrayWithoutIndices
 };

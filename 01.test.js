@@ -1,5 +1,5 @@
 const { f1, f2 } = require('./01');
-const fileAsLines = require('./generic').fileAsLines;
+const { fileAsLines } = require('./generic');
 
 const CHANGES = fileAsLines('./01.input.txt').map((l) => parseInt(l, 10));
 
