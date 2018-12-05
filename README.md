@@ -29,3 +29,11 @@ all tests:
 a single test:
 
     npx yarn 04.test.js
+
+## solved problems
+
+    01 *
+    02
+    03
+    04
+    05 **

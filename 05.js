@@ -44,10 +44,26 @@ function doReactions(polymer_) {
   return polymer;
 }
 
+function getUniqueTokenKinds(polymer) {
+  const kinds = new Set();
+  polymer.forEach((t) => {
+    kinds.add(t.kind);
+  });
+  return Array.from(kinds);
+}
+
+function removeTokensOfKind(polymer, kind) {
+  return polymer.filter((t) => {
+    return t.kind !== kind;
+  });
+}
+
 module.exports = {
   isLowerCase,
   tokenize,
   untokenize,
   doTokensReact,
-  doReactions
+  doReactions,
+  getUniqueTokenKinds,
+  removeTokensOfKind
 };
