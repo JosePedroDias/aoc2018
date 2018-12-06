@@ -24,11 +24,6 @@ const EXAMPLE_LINES = `1, 1
 5, 5
 8, 9`.split('\n');
 
-it('parseLine', () => {
-  const items = EXAMPLE_LINES.map(parseLine);
-  // console.log(items);
-});
-
 it('manhattanDist', () => {
   expect(manhattanDist([2, 3], [3, 1])).toBe(3);
   expect(manhattanDist([-1, -1], [-3, -1])).toBe(2);
@@ -80,6 +75,6 @@ it('question 1', () => {
 
 it('question 2', () => {
   const positions = LINES.map(parseLine);
-  const answer = question2(positions, letters50);
-  expect(answer).toBe(4916); // too low: 4916
+  const answer = question2(positions);
+  expect(answer).toBe(46966);
 });

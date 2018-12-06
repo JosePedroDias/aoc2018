@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const { combinations22, Matrix } = require('./generic');
 
 const REGEX = /([0-9]+), ([0-9]+)/;
@@ -178,41 +180,42 @@ function question1(positions, letters) {
 
 function calcDistanceBetweenCoords(pos, coords, maxDist) {
   let sum = 0;
-  const isSafe = !coords.some((coord) => {
+  const isSafe = !coords.some((coord, _) => {
     const dist = manhattanDist(coord, pos);
     sum += dist;
-    if (sum > maxDist) {
+    if (sum >= maxDist) {
       return true;
     }
   });
   return isSafe ? sum : undefined;
 }
 
-function question2(positions, letters) {
-  const limits = findLimits(positions);
-  const m = computeMatrix(positions, limits, letters);
-  const candidateIndices_ = indicesBetweenLimits(positions, limits);
+function question2(positions) {
+  const {
+    x: [xi, xf],
+    y: [yi, yf]
+  } = findLimits(positions);
 
-  const boundaryChars = findCharsInMatrixPositions(m, limits);
-  const denyTheseIndices = boundaryChars.map((char) => letters.indexOf(char));
-  const candidateIndices = candidateIndices_.filter((v) => {
-    return denyTheseIndices.indexOf(v) === -1;
-  });
+  // const m = new Matrix(xf - xi + 1, yf - yi + 1, xi, yi);
 
-  // console.log(candidateIndices);
-
-  let finalResult;
-  candidateIndices.some((idx) => {
-    const pos = positions[idx];
-    const char = m.getChar(pos[0], pos[1]);
-    const coords = m.getOcurrenceCoordinates(char);
-    const res = calcDistanceBetweenCoords(pos, coords, 10000);
-    if (res !== undefined) {
-      finalResult = res;
-      return true;
+  let sum = 0;
+  let all = 0;
+  for (let y = yi; y <= yf; ++y) {
+    for (let x = xi; x <= xf; ++x) {
+      ++all;
+      const res = calcDistanceBetweenCoords([x, y], positions, 10000);
+      if (res !== undefined) {
+        ++sum;
+        // m.setChar(x, y, '#');
+      }
     }
-  });
-  return finalResult;
+  }
+
+  // drawPositions(m, positions, letters50);
+  // console.log(`${sum}/${all}`);
+  // fs.writeFileSync('06.result.txt', m.toString());
+
+  return sum;
 }
 
 module.exports = {
