@@ -32,11 +32,12 @@ const MONTH_MINS_ = [
   M_MINS_30, //  9
   M_MINS_31, // 10
   M_MINS_30, // 11
-  M_MINS_31 //  12
+  M_MINS_31, //  12
+  M_MINS_31 //  1 next
 ];
 
-const MONTH_MINS = new Array(12);
-for (let i = 0; i < 12; ++i) {
+const MONTH_MINS = new Array(13);
+for (let i = 0; i < 13; ++i) {
   MONTH_MINS[i] = 0;
   for (let j = 0; j < i; ++j) {
     MONTH_MINS[i] += MONTH_MINS_[j];
@@ -46,14 +47,45 @@ for (let i = 0; i < 12; ++i) {
 // console.log('MONTH_MINS_', MONTH_MINS_);
 // console.log('MONTH_MINS', MONTH_MINS);
 
-// '1518-10-03 00:47'
-function dateTimeToNum(dtS) {
+// '1518-10-03 00:47' -> [10,3, 0, 47]
+function parseDateTimeS(dtS) {
   const m = parseInt(dtS.substr(5, 2), 10);
   const d = parseInt(dtS.substr(8, 2), 10);
   const h = parseInt(dtS.substr(11, 2), 10);
   const min = parseInt(dtS.substr(14), 10);
-  // console.log(dtS, y, m, d, h, min);
-  return MONTH_MINS[m] + d * D_MINS + h * H_MINS + min;
+  return [m, d, h, min];
+}
+
+function dateTimeSToNum(dtS) {
+  return dateTimeToNum(parseDateTimeS(dtS));
+}
+
+function dateTimeToNum([m, d, h, min]) {
+  return MONTH_MINS[m - 1] + d * D_MINS + h * H_MINS + min;
+}
+
+function numToTime(num) {
+  let min = getMinuteOfDay(num);
+  const h = Math.floor(min / H_MINS);
+  min -= h * H_MINS;
+  return [h, min];
+}
+
+function numToDateTime(min) {
+  let m = 1;
+  while (min > MONTH_MINS[m]) {
+    ++m;
+  }
+  min -= MONTH_MINS[m - 1];
+  const d = Math.floor(min / D_MINS);
+  min -= d * D_MINS;
+  const h = Math.floor(min / H_MINS);
+  min -= h * H_MINS;
+  return [m, d, h, min];
+}
+
+function getMinuteOfDay(num) {
+  return num % D_MINS;
 }
 
 function parseEvent(desc) {
@@ -67,17 +99,51 @@ function parseEvent(desc) {
   return res && res[1];
 }
 
-function parseLog(lines) {
-  lines.sort();
-  return lines.map((line) => {
-    const [dtS, ev] = parseIntoDateTimeDesc(line);
-    return [dateTimeToNum(dtS), parseEvent(ev)];
+function parseLog(sortedLines) {
+  let lastEv;
+  const guards = new Map();
+  let guard;
+  const knownGuards = new Set();
+
+  sortedLines.forEach((line) => {
+    // console.log(`** ${line} ** `);
+    const [dtS, desc] = parseIntoDateTimeDesc(line);
+    const ev = parseEvent(desc);
+    // console.log('ev', ev);
+    const num = dateTimeSToNum(dtS);
+    const mod = getMinuteOfDay(num);
+
+    if (typeof ev === 'string') {
+      if (lastEv && !lastEv[2]) {
+        console.log('SEMI awake after', num - lastEv[0]);
+      }
+
+      guard = guards.get(ev);
+      if (!guard) {
+        guard = new Map();
+        guards.set(ev, guard);
+        lastEv = [num, mod, true];
+        console.log('first awake of ', ev, mod);
+      }
+    } else if (ev) {
+      console.log('awake after', num - lastEv[0]);
+      lastEv = [num, mod, true];
+    } else {
+      console.log('asleep after', num - lastEv[0]);
+      lastEv = [num, mod, false];
+    }
   });
+
+  return guards;
 }
 
 module.exports = {
   parseIntoDateTimeDesc,
+  dateTimeSToNum,
   dateTimeToNum,
+  numToDateTime,
+  numToTime,
+  getMinuteOfDay,
   parseEvent,
   parseLog
 };
