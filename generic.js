@@ -81,6 +81,19 @@ class Matrix {
     return this.lines[y - this.dy][x - this.dx];
   }
 
+  countOcurrences(char) {
+    let count = 0;
+    for (let y = 0; y < this.h; ++y) {
+      const line = this.lines[y];
+      for (let x = 0; x < this.w; ++x) {
+        if (line[x] === char) {
+          ++count;
+        }
+      }
+    }
+    return count;
+  }
+
   toString() {
     return this.lines
       .map((line) => {
