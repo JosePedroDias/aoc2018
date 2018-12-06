@@ -7,6 +7,7 @@ const {
   computeMatrix,
   drawPositions,
   question1,
+  question2,
   letters,
   LETTERS,
   letters50
@@ -74,5 +75,11 @@ it('question 1 ex', () => {
 it('question 1', () => {
   const positions = LINES.map(parseLine);
   const answer = question1(positions, letters50);
-  expect(answer).toBe(6763); // failed too high: 6763
+  expect(answer).toBe(4829);
+});
+
+it('question 2', () => {
+  const positions = LINES.map(parseLine);
+  const answer = question2(positions, letters50);
+  expect(answer).toBe(4916); // too low: 4916
 });

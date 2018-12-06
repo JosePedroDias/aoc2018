@@ -1,4 +1,4 @@
-const { Matrix } = require('./generic');
+const { combinations22, Matrix } = require('./generic');
 
 const REGEX = /([0-9]+), ([0-9]+)/;
 
@@ -80,6 +80,24 @@ function indicesBetweenLimits(positions, limits) {
   return candidateIndices;
 }
 
+function indicesWithUniqueCoords(positions) {
+  const candidateIndices = [];
+  positions.forEach(([x, y], i) => {
+    const failed = positions.some(([x_, y_], i_) => {
+      if (i === i_) {
+        return false; // continue
+      }
+      if (x === x_ || y === y_) {
+        return true; // break
+      }
+    });
+    if (!failed) {
+      candidateIndices.push(i);
+    }
+  });
+  return candidateIndices;
+}
+
 function drawPositions(matrix, positions, letters) {
   for (let i = 0; i < positions.length; ++i) {
     const [x, y] = positions[i];
@@ -108,16 +126,49 @@ function computeMatrix(positions, limits, letters) {
   return m;
 }
 
+function boundaryPositions(xi, xf, yi, yf) {
+  const positions = [];
+  for (let x = xi; x <= xf; ++x) {
+    for (let y = yi; y <= yf; ++y) {
+      if (x === xi || x === xf || y === yi || y === yf) {
+        positions.push([x, y]);
+      }
+    }
+  }
+  return positions;
+}
+
+function findCharsInMatrixPositions(matrix, limits) {
+  const uniqueCharsFound = new Set();
+  const {
+    x: [xi, xf],
+    y: [yi, yf]
+  } = limits;
+  const positions = boundaryPositions(xi, xf, yi, yf);
+
+  positions.forEach(([x, y]) => {
+    uniqueCharsFound.add(matrix.getChar(x, y));
+  });
+
+  return Array.from(uniqueCharsFound);
+}
+
 function question1(positions, letters) {
   const limits = findLimits(positions);
   const m = computeMatrix(positions, limits, letters);
-  const candidateIndices = indicesBetweenLimits(positions, limits);
+  const candidateIndices_ = indicesBetweenLimits(positions, limits);
+
+  const boundaryChars = findCharsInMatrixPositions(m, limits);
+  const denyTheseIndices = boundaryChars.map((char) => letters.indexOf(char));
+  const candidateIndices = candidateIndices_.filter((v) => {
+    return denyTheseIndices.indexOf(v) === -1;
+  });
+
   let largestArea = 0;
   candidateIndices.forEach((idx) => {
     const pos = positions[idx];
     const char = m.getChar(pos[0], pos[1]);
     const area = m.countOcurrences(char);
-    // console.log(char, area);
     if (area > largestArea) {
       largestArea = area;
     }
@@ -125,7 +176,44 @@ function question1(positions, letters) {
   return largestArea;
 }
 
-(function() {})();
+function calcDistanceBetweenCoords(pos, coords, maxDist) {
+  let sum = 0;
+  const isSafe = !coords.some((coord) => {
+    const dist = manhattanDist(coord, pos);
+    sum += dist;
+    if (sum > maxDist) {
+      return true;
+    }
+  });
+  return isSafe ? sum : undefined;
+}
+
+function question2(positions, letters) {
+  const limits = findLimits(positions);
+  const m = computeMatrix(positions, limits, letters);
+  const candidateIndices_ = indicesBetweenLimits(positions, limits);
+
+  const boundaryChars = findCharsInMatrixPositions(m, limits);
+  const denyTheseIndices = boundaryChars.map((char) => letters.indexOf(char));
+  const candidateIndices = candidateIndices_.filter((v) => {
+    return denyTheseIndices.indexOf(v) === -1;
+  });
+
+  // console.log(candidateIndices);
+
+  let finalResult;
+  candidateIndices.some((idx) => {
+    const pos = positions[idx];
+    const char = m.getChar(pos[0], pos[1]);
+    const coords = m.getOcurrenceCoordinates(char);
+    const res = calcDistanceBetweenCoords(pos, coords, 10000);
+    if (res !== undefined) {
+      finalResult = res;
+      return true;
+    }
+  });
+  return finalResult;
+}
 
 module.exports = {
   parseLine,
@@ -133,9 +221,11 @@ module.exports = {
   nearestToPos,
   findLimits,
   indicesBetweenLimits,
+  indicesWithUniqueCoords,
   computeMatrix,
   drawPositions,
   question1,
+  question2,
   letters,
   LETTERS,
   letters50
