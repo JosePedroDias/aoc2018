@@ -53,6 +53,43 @@ function combinations22(n) {
   return arr;
 }
 
+class Matrix {
+  constructor(w, h, dx = 0, dy = 0, defaultChar = ' ') {
+    this.lines = new Array(h);
+    this.w = w;
+    this.h = h;
+    this.dx = dx;
+    this.dy = dy;
+    for (let y = 0; y < h; ++y) {
+      this.lines[y] = new Array(w);
+      this.lines[y].fill(defaultChar);
+    }
+  }
+
+  getLimits() {
+    return {
+      x: [this.dx, this.dx + this.w],
+      y: [this.dy, this.dy + this.h]
+    };
+  }
+
+  setChar(x, y, char) {
+    this.lines[y - this.dy][x - this.dx] = char;
+  }
+
+  getChar(x, y) {
+    return this.lines[y - this.dy][x - this.dx];
+  }
+
+  toString() {
+    return this.lines
+      .map((line) => {
+        return line.join('');
+      })
+      .join('\n');
+  }
+}
+
 module.exports = {
   fileAsLines,
   cloneArray,
@@ -60,5 +97,6 @@ module.exports = {
   cloneMap,
   mapFromObj,
   clonedArrayWithoutIndices,
-  combinations22
+  combinations22,
+  Matrix
 };
