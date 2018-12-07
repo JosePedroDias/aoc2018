@@ -81,6 +81,74 @@ class Matrix {
     return this.lines[y - this.dy][x - this.dx];
   }
 
+  ocurrencesInLine(charOrFn, x) {
+    const fn =
+      typeof charOrFn === 'function'
+        ? charOrFn
+        : function(vv) {
+            vv === charOrFn;
+          };
+    const positions = [];
+    for (let y = this.dy; y < this.h - this.dy; ++y) {
+      const v = this.lines[y - this.dy][x - this.dx];
+      const pos = [x, y];
+      if (fn(v, pos)) {
+        positions.push(pos);
+      }
+    }
+    return positions;
+  }
+
+  ocurrencesInRow(charOrFn, y) {
+    const fn =
+      typeof charOrFn === 'function'
+        ? charOrFn
+        : function(vv) {
+            vv === charOrFn;
+          };
+    const positions = [];
+    for (let x = this.dx; x < this.w - this.dx; ++x) {
+      const v = this.lines[y - this.dy][x - this.dx];
+      const pos = [x, y];
+      if (fn(v, pos)) {
+        positions.push(pos);
+      }
+    }
+    return positions;
+  }
+
+  firstOcurrenceInLine(charOrFn, x) {
+    const fn =
+      typeof charOrFn === 'function'
+        ? charOrFn
+        : function(vv) {
+            vv === charOrFn;
+          };
+    for (let y = this.dy; y < this.h - this.dy; ++y) {
+      const v = this.lines[y - this.dy][x - this.dx];
+      const pos = [x, y];
+      if (fn(v, pos)) {
+        return pos;
+      }
+    }
+  }
+
+  firstOcurrenceInRow(charOrFn, y) {
+    const fn =
+      typeof charOrFn === 'function'
+        ? charOrFn
+        : function(vv) {
+            vv === charOrFn;
+          };
+    for (let x = this.dx; x < this.w - this.dx; ++x) {
+      const v = this.lines[y - this.dy][x - this.dx];
+      const pos = [x, y];
+      if (fn(v, pos)) {
+        return pos;
+      }
+    }
+  }
+
   getOcurrenceCoordinates(char) {
     const coords = [];
     for (let y = 0; y < this.h; ++y) {
