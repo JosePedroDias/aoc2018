@@ -3,9 +3,14 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "devDependencies": {
     "jest": "^23.6.0"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coverageDirectory": "coverage"
   }
 }
