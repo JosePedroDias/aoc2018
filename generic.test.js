@@ -6,11 +6,13 @@ const {
   mapFromObj,
   clonedArrayWithoutIndices,
   combinations22,
+  repeatString,
+  padWith,
   Matrix
 } = require('./generic');
 
 it('fileAsLines', () => {
-  expect(fileAsLines('./.gitignore')).toEqual(['node_modules']);
+  expect(fileAsLines('./.gitignore')).toEqual(['node_modules', 'coverage']);
 });
 
 it('cloneArray', () => {
@@ -60,6 +62,14 @@ it('clonedArrayWithoutIndices', () => {
 it('combinations22', () => {
   expect(combinations22(2)).toEqual([[0, 1]]);
   expect(combinations22(3)).toEqual([[0, 1], [0, 2], [1, 2]]);
+});
+
+it('repeatString', () => {
+  expect(repeatString('x', 2)).toBe('xx');
+});
+
+it('padWith', () => {
+  expect(padWith('..', 4, '*')).toBe('**..');
 });
 
 describe('matrix class', () => {

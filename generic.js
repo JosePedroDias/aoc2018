@@ -53,6 +53,18 @@ function combinations22(n) {
   return arr;
 }
 
+function repeatString(s, times) {
+  const arr = new Array(times + 1);
+  return arr.join(s);
+}
+
+function padWith(s, maxChars, using = ' ') {
+  const l = s.length;
+  return (
+    repeatString(using, maxChars - l) + (typeof s === 'string' ? s : '' + s)
+  );
+}
+
 class Matrix {
   constructor(w, h, dx = 0, dy = 0, defaultChar = ' ') {
     this.lines = new Array(h);
@@ -192,5 +204,7 @@ module.exports = {
   mapFromObj,
   clonedArrayWithoutIndices,
   combinations22,
+  repeatString,
+  padWith,
   Matrix
 };
