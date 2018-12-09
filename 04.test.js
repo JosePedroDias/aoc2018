@@ -2,7 +2,9 @@ const {
   parseIntoDateTimeDesc,
   dateTimeSToNum,
   parseEvent,
-  parseLog
+  parseLog,
+  question1,
+  question2
 } = require('./04');
 
 const { fileAsLines } = require('./generic');
@@ -35,17 +37,65 @@ it('parseIntoDateTimeDesc', () => {
 });
 
 it('dateTimeSToNum', () => {
-  expect(dateTimeSToNum('1518-10-13 23:50')).toBe(457910);
-  expect(dateTimeSToNum('1518-02-04 00:48')).toBe(90768);
+  expect(dateTimeSToNum('1518-10-13 23:50')).toBe(413270);
+  expect(dateTimeSToNum('1518-02-04 00:48')).toBe(50448);
 });
 
 it('parseEvent', () => {
   expect(parseEvent('falls asleep')).toBe(false);
   expect(parseEvent('wakes up')).toBe(true);
-  expect(parseEvent('Guard #487 begins shift')).toBe('487');
+  expect(parseEvent('Guard #487 begins shift')).toBe(487);
 });
 
-fit('parseLog', () => {
-  console.log(parseLog(EXAMPLE_LINES));
-  //console.log(parseLog(SORTED_LINES));
+it('parseLog', () => {
+  const guards = parseLog(EXAMPLE_LINES);
+  expect(Array.from(guards.keys()).sort()).toEqual([10, 99]);
+
+  //
+
+  let guard = guards.get(10);
+
+  expect(guard.minsAsleep).toEqual(50);
+
+  let i = 0;
+  for (let v of guard.sleepDayMatrix.values()) {
+    i += v;
+  }
+  expect(i).toEqual(50);
+
+  //
+
+  guard = guards.get(99);
+
+  expect(guard.minsAsleep).toEqual(30);
+
+  i = 0;
+  for (let v of guard.sleepDayMatrix.values()) {
+    i += v;
+  }
+  expect(i).toEqual(30);
+});
+
+it('question 1 example', () => {
+  const guards = parseLog(EXAMPLE_LINES);
+  const answer = question1(guards);
+  expect(answer).toBe(240); // #10 * min 24
+});
+
+it('question 1', () => {
+  const guards = parseLog(SORTED_LINES);
+  const answer = question1(guards);
+  expect(answer).toBe(72925);
+});
+
+it('question 2 example', () => {
+  const guards = parseLog(EXAMPLE_LINES);
+  const answer = question2(guards);
+  expect(answer).toBe(4455); // #99 * min 45
+});
+
+it('question 2', () => {
+  const guards = parseLog(SORTED_LINES);
+  const answer = question2(guards);
+  expect(answer).toBe(49137);
 });

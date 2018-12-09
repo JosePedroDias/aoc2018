@@ -96,45 +96,93 @@ function parseEvent(desc) {
     return true;
   }
   const res = /#([0-9]+)/.exec(desc);
-  return res && res[1];
+  return res && parseInt(res[1], 10);
+}
+
+function generateMinutesInterval(numA, numB) {
+  const arr = [];
+  for (let n = numA; n <= numB; ++n) {
+    arr.push(n);
+  }
+  return arr;
 }
 
 function parseLog(sortedLines) {
-  let lastEv;
+  let lastEv; // true means awake, false asleep, number is a new awake guy
+  let lastNum;
   const guards = new Map();
   let guard;
-  const knownGuards = new Set();
 
   sortedLines.forEach((line) => {
-    // console.log(`** ${line} ** `);
     const [dtS, desc] = parseIntoDateTimeDesc(line);
     const ev = parseEvent(desc);
-    // console.log('ev', ev);
     const num = dateTimeSToNum(dtS);
-    const mod = getMinuteOfDay(num);
 
-    if (typeof ev === 'string') {
-      if (lastEv && !lastEv[2]) {
-        console.log('SEMI awake after', num - lastEv[0]);
-      }
-
+    if (typeof ev === 'number') {
       guard = guards.get(ev);
       if (!guard) {
-        guard = new Map();
+        guard = { minsAsleep: 0, sleepDayMatrix: new Map(), id: ev };
         guards.set(ev, guard);
-        lastEv = [num, mod, true];
-        console.log('first awake of ', ev, mod);
+        lastEv = true;
+        // console.log('first awake of ', ev, num);
       }
     } else if (ev) {
-      console.log('awake after', num - lastEv[0]);
-      lastEv = [num, mod, true];
+      // console.log('awake after', num - lastNum);
+      const mins = generateMinutesInterval(lastNum, num - 1);
+      guard.minsAsleep += mins.length;
+      mins.map(getMinuteOfDay).forEach((mod) => {
+        const v = guard.sleepDayMatrix.get(mod) || 0;
+        guard.sleepDayMatrix.set(mod, v + 1);
+      });
+      lastEv = true;
     } else {
-      console.log('asleep after', num - lastEv[0]);
-      lastEv = [num, mod, false];
+      // console.log('asleep after', num - lastNum);
+      lastEv = false;
     }
+    lastNum = num;
   });
 
   return guards;
+}
+
+function keyWithHighestValue(map) {
+  let bestK;
+  let bestV = Number.MIN_SAFE_INTEGER;
+  for (let [k, v] of map.entries()) {
+    if (v > bestV) {
+      bestV = v;
+      bestK = k;
+    }
+  }
+  return bestK;
+}
+
+function question1(guards) {
+  const guardsArr = Array.from(guards.values());
+  const getMinsAsleep = (g) => g.minsAsleep;
+  guardsArr.sort(function(a, b) {
+    return getMinsAsleep(b) - getMinsAsleep(a);
+  });
+  const electedGuard = guardsArr.shift();
+  const highestMinute = keyWithHighestValue(electedGuard.sleepDayMatrix);
+  return highestMinute * electedGuard.id;
+}
+
+function question2(guards) {
+  let globalMinute;
+  let globalId;
+  let globalValue = Number.MIN_SAFE_INTEGER;
+  const guardsArr = Array.from(guards.values());
+  guardsArr.forEach((g) => {
+    const highestMinute = keyWithHighestValue(g.sleepDayMatrix);
+    const highestValue = g.sleepDayMatrix.get(highestMinute);
+    if (highestValue > globalValue) {
+      globalValue = highestValue;
+      globalMinute = highestMinute;
+      globalId = g.id;
+    }
+  });
+  return globalMinute * globalId;
 }
 
 module.exports = {
@@ -145,5 +193,7 @@ module.exports = {
   numToTime,
   getMinuteOfDay,
   parseEvent,
-  parseLog
+  parseLog,
+  question1,
+  question2
 };
