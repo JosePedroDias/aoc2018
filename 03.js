@@ -8,31 +8,55 @@ function parseLine(line) {
   return m.map((n) => parseInt(n, 10));
 }
 
-function calcExtension(lines) {
-  let minX = 100000;
-  let maxX = -100000;
-  let minY = 100000;
-  let maxY = -100000;
-  lines.forEach(([ev, xi, yi, w, h]) => {
-    const xf = xi + w;
-    const yf = yi + h;
-    if (xi < minX) {
-      minX = xi;
+function cellsToFill(xi, yi, w, h) {
+  const cells = [];
+  for (let y = yi; y < yi + h; ++y) {
+    for (let x = xi; x < xi + w; ++x) {
+      cells.push(x + ',' + y);
     }
-    if (xf > maxX) {
-      maxX = xf;
-    }
-    if (yi < minY) {
-      minY = yi;
-    }
-    if (yf > maxY) {
-      maxY = yf;
-    }
+  }
+  return cells;
+}
+
+function question1(events) {
+  const fabric = new Map();
+  events.forEach(([claim, xi, yi, w, h]) => {
+    const cells = cellsToFill(xi, yi, w, h);
+    cells.forEach((cell) => {
+      let v = fabric.get(cell) || 0;
+      fabric.set(cell, ++v);
+    });
   });
-  return [minX, maxX, minY, maxY];
+  let answer = 0;
+  for (let v of fabric.values()) {
+    if (v > 1) {
+      ++answer;
+    }
+  }
+  return answer;
+}
+
+function question2(events) {
+  const fabric = new Map();
+  const claimsStillHolding = new Set();
+  events.forEach(([claim, xi, yi, w, h]) => {
+    claimsStillHolding.add(claim);
+    const cells = cellsToFill(xi, yi, w, h);
+    cells.forEach((cell) => {
+      const oldV = fabric.get(cell);
+      if (isFinite(oldV)) {
+        claimsStillHolding.delete(oldV);
+        claimsStillHolding.delete(claim);
+      }
+      fabric.set(cell, claim);
+    });
+  });
+  return Array.from(claimsStillHolding);
 }
 
 module.exports = {
   parseLine,
-  calcExtension
+  cellsToFill,
+  question1,
+  question2
 };
