@@ -65,6 +65,10 @@ function padWith(s, maxChars, using = ' ') {
   );
 }
 
+function clone(o) {
+  return JSON.parse(JSON.stringify(o));
+}
+
 class Matrix {
   constructor(w, h, dx = 0, dy = 0, defaultChar = ' ') {
     this.lines = new Array(h);
@@ -206,5 +210,6 @@ module.exports = {
   combinations22,
   repeatString,
   padWith,
+  clone,
   Matrix
 };
