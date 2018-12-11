@@ -59,10 +59,11 @@ function repeatString(s, times) {
 }
 
 function padWith(s, maxChars, using = ' ') {
+  if (typeof s !== 'string') {
+    s = '' + s;
+  }
   const l = s.length;
-  return (
-    repeatString(using, maxChars - l) + (typeof s === 'string' ? s : '' + s)
-  );
+  return repeatString(using, maxChars - l) + s;
 }
 
 function clone(o) {

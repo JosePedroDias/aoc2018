@@ -1,4 +1,4 @@
-const { parseLine, letterToIndex, indexToLetter, question1 } = require('./07');
+const { parseLine, question1 } = require('./07');
 
 const { fileAsLines } = require('./generic');
 
@@ -22,18 +22,6 @@ it('parse file', () => {
     ['D', 'E'],
     ['F', 'E']
   ]);
-});
-
-it('letterToIndex', () => {
-  expect(letterToIndex('A')).toBe(0);
-  expect(letterToIndex('C')).toBe(2);
-  expect(letterToIndex('Z')).toBe(25);
-});
-
-it('indexToLetter', () => {
-  expect(indexToLetter(0)).toBe('A');
-  expect(indexToLetter(2)).toBe('C');
-  expect(indexToLetter(25)).toBe('Z');
 });
 
 it('question 1 ex', () => {

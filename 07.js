@@ -1,50 +1,65 @@
-const REGEX = /Step ([A-Z]) must be finished before step ([A-Z]) can begin./; // A -> B
+// const { cloneSet } = require('./generic');
 
-const { Matrix } = require('./generic');
+const REGEX = /Step ([A-Z]) must be finished before step ([A-Z]) can begin./; // A -> B
 
 function parseLine(line) {
   const m = REGEX.exec(line);
   return [m[1], m[2]];
 }
 
-const FIRST_LETTER_CODE = 'A'.charCodeAt(0);
-
-function letterToIndex(letter) {
-  return letter.charCodeAt(0) - FIRST_LETTER_CODE;
-}
-
-function indexToLetter(index) {
-  return String.fromCharCode(FIRST_LETTER_CODE + index);
+function missingDestinations(points, froms) {
+  froms.values.forEach((destinationArr) =>
+    destinationArr.forEach((to) => set.add(to))
+  );
+  const missing = Array.from(points).filter((el) => !froms.has(el));
+  missing.sort();
+  return missing;
 }
 
 function question1(pairs) {
-  const debug = false;
+  const froms = new Map();
+  const points = new Set();
 
-  const uniques = new Set();
-  // const mapAToB = new Map();
-  pairs.forEach(([a, b]) => {
-    uniques.add(a);
-    uniques.add(b);
+  pairs.forEach(([from, to]) => {
+    let bag = froms.get(from);
+    if (!bag) {
+      bag = [];
+      froms.set(from, bag);
+    }
+    bag.push(to);
+
+    points.add(from);
+    points.add(to);
   });
-  const uniqueLetters = Array.from(uniques);
-  uniqueLetters.sort();
-  const l = uniqueLetters.length;
-  const m = debug ? new Matrix(l + 1, l + 1, -1, -1) : new Matrix(l, l);
-  debug &&
-    uniqueLetters.forEach((letter, idx) => {
-      m.setChar(-1, idx, letter);
-      m.setChar(idx, -1, letter);
-    });
-  pairs.forEach(([a, b]) => {
-    m.setChar(letterToIndex(a), letterToIndex(b), 'X');
-  });
-  function isCellOccupied(v, pos) {
-    console.log(v, pos);
-    return v !== ' ';
+
+  /* for (const bag of froms.values()) {
+    bag.sort();
+  } */
+
+  console.log('froms', froms);
+
+  const result = [];
+
+  let nextCandidates = missingDestinations(points, froms);
+  console.log('nextCandidates', nextCandidates);
+  let from = nextCandidates.shift();
+  result.push(from);
+  let to;
+  while (true) {
+    to = froms.get(from).shift();
+    if (!to) {
+      break;
+    }
+    result.push(to);
+    console.log(froms);
+
+    nextCandidates = missingDestinations(points, froms);
+    from = nextCandidates.shift();
   }
-  console.log(1, m.ocurrencesInLine(1, isCellOccupied));
-  console.log(m.toString());
-  return 'CABDFE'; // uniqueLetters;
+
+  console.log(result);
+
+  return 'CABDFE';
 }
 
-module.exports = { parseLine, letterToIndex, indexToLetter, question1 };
+module.exports = { parseLine, question1 };
