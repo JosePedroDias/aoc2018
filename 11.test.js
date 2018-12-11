@@ -3,8 +3,11 @@ const {
   cellValue,
   generateMatrix,
   searchMatrix,
-  question1
+  question1,
+  question2
 } = require('./11');
+
+const INPUT = 7403;
 
 const { padWith } = require('./generic');
 
@@ -59,10 +62,21 @@ it('generateMatrix', () => {
 it('searchMatrix', () => {
   const mtx = generateMatrix(10, 4);
   // console.log(printSubMatrix(mtx, 1, 1, 4, 4));
-  expect(searchMatrix(mtx, 4, 2)).toBe('2,2');
+  expect(searchMatrix(mtx, 4, 2)[0]).toBe('3,3');
 });
 
 it('question1', () => {
   expect(question1(18, 300, 3)).toBe('33,45');
   expect(question1(42, 300, 3)).toBe('21,61');
+
+  expect(question1(INPUT, 300, 3)).toBe('235,48');
+});
+
+it('question2', () => {
+  // each answer takes 320s in my MBP
+
+  expect(question2(18, 300)).toBe('90,269,16');
+  expect(question2(42, 300)).toBe('232,251,12');
+
+  expect(question2(INPUT, 300)).toBe('285,113,11');
 });

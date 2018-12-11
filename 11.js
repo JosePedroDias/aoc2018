@@ -1,9 +1,5 @@
 const { Matrix } = require('./generic');
 
-function _hundreds(n) {
-  return (n - (n % 100)) / 100;
-}
-
 function hundreds(n) {
   const s = n.toString();
   if (s.length < 3) {
@@ -41,26 +37,39 @@ function searchMatrix(mtx, W, w) {
       let sum = 0;
       for (let i = 0; i < w; ++i) {
         for (let j = 0; j < w; ++j) {
-          sum += mtx.getChar(x + i, y + i);
+          sum += mtx.getChar(x + i, y + j);
         }
       }
-      // console.log(x + ',' + y + ' -> ' + sum);
       if (sum > highestValue) {
         highestValue = sum;
         highestCell = x + ',' + y;
-        // console.log(highestCell + ' -> ' + highestValue);
       }
     }
   }
-  return highestCell;
+  return [highestCell, highestValue];
 }
 
 function question1(gridSerialNumber, W = 300, w = 3) {
-  // fill matrix
+  const mtx = generateMatrix(gridSerialNumber, W);
+  return searchMatrix(mtx, W, w)[0];
+}
+
+function question2(gridSerialNumber, W = 300) {
   const mtx = generateMatrix(gridSerialNumber, W);
 
-  // search for largest 3x3 submatrix
-  return searchMatrix(mtx, W, w);
+  let bestValue = Number.MIN_SAFE_INTEGER;
+  let bestCell;
+  let bestw;
+  for (let w = 1; w <= 300; ++w) {
+    const [cell, value] = searchMatrix(mtx, W, w);
+    if (value > bestValue) {
+      bestValue = value;
+      bestCell = cell;
+      bestw = w;
+    }
+  }
+
+  return bestCell + ',' + bestw;
 }
 
 module.exports = {
@@ -68,5 +77,6 @@ module.exports = {
   cellValue,
   generateMatrix,
   searchMatrix,
-  question1
+  question1,
+  question2
 };
