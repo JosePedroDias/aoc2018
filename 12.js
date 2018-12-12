@@ -1,7 +1,7 @@
 const { repeatString, clone } = require('./generic');
 
-const OFF = '.'
-const ON = '#'
+const OFF = '.';
+const ON = '#';
 
 function parseInput(lines) {
   lines = clone(lines); // not to be destructive
@@ -13,14 +13,21 @@ function parseInput(lines) {
 
 function convertFromString(s, delta) {
   const nums = s.split('').map((char, i) => {
-    return (char === ON ? i + delta : 0);
-  })
+    return char === ON ? i + delta : 0;
+  });
   return new Set(nums);
 }
 
 function convertToString(map) {
   const ons = Array.from(map);
-  ons.sort();
+  ons.sort((a, b) => a - b);
+  const min = ons[0];
+  const max = ons[ons.length - 1];
+  const arr = new Array(max - min + 1);
+  for (let i = min; i <= max; ++i) {
+    arr[i - min] = map.has(i) ? ON : OFF;
+  }
+  return arr.join('');
 }
 
 function nextGeneration(gen, rules) {
@@ -47,7 +54,7 @@ function measure(g, n) {
   g.split('').forEach((ch, i) => {
     if (ch === '#') {
       const j = i - delta;
-      sum += j
+      sum += j;
     }
   });
   return sum;
@@ -69,7 +76,7 @@ function question1(g, rules) {
   return sum;
 }
 
-(function () {
+(function() {
   let g = '#..#.#..##......###...###';
   const rules = [
     ['...##', '#'],
@@ -91,4 +98,11 @@ function question1(g, rules) {
   // question1(g, rules);
 })();
 
-module.exports = { parseInput, convertFromString, nextGeneration, measure, question1 };
+module.exports = {
+  parseInput,
+  convertFromString,
+  convertToString,
+  nextGeneration,
+  measure,
+  question1
+};

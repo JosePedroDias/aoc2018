@@ -1,4 +1,4 @@
-const { parseInput, convertFromString, nextGeneration, measure, question1 } = require('./12');
+const { parseInput, convertFromString, convertToString, nextGeneration, measure, question1 } = require('./12');
 const { fileAsLines } = require('./generic');
 
 const LINES = fileAsLines('./12.input.txt');
@@ -47,8 +47,8 @@ it('convertFromString', () => {
 })
 
 fit('convertToString', () => {
-  expect(convertToString(new Set([]))).toBe('')
-  expect(convertToString(new Set([]))).toBe('')
+  expect(convertToString(new Set([-2, -1, 0, 2]))).toBe('###.#')
+  expect(convertToString(new Set([0, 3, 5, 8, 9, 16, 17, 18, 22, 23, 24]))).toBe('#..#.#..##......###...###')
 })
 
 it('nextGeneration', () => {
