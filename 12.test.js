@@ -1,4 +1,4 @@
-const { parseInput, nextGeneration, measure, question1 } = require('./12');
+const { parseInput, convertFromString, nextGeneration, measure, question1 } = require('./12');
 const { fileAsLines } = require('./generic');
 
 const LINES = fileAsLines('./12.input.txt');
@@ -41,6 +41,16 @@ it('parseInput', () => {
   ]);
 });
 
+it('convertFromString', () => {
+  expect(convertFromString('###.#', -2)).toEqual(new Set([-2, -1, 0, 2]))
+  expect(convertFromString('#..#.#..##......###...###', 0)).toEqual(new Set([0, 3, 5, 8, 9, 16, 17, 18, 22, 23, 24]))
+})
+
+fit('convertToString', () => {
+  expect(convertToString(new Set([]))).toBe('')
+  expect(convertToString(new Set([]))).toBe('')
+})
+
 it('nextGeneration', () => {
   expect(
     nextGeneration('#..#.#..##......###...###', [
@@ -74,7 +84,7 @@ it('question 1 example', () => {
   expect(sum).toBe(325); // is returning 202
 });
 
-xit('question 1', () => {
+it('question 1', () => {
   const [init, rules] = parseInput(LINES);
   const sum = question1(init, rules);
   expect(sum).toBe(0); // TODO calc after example works

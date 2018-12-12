@@ -1,4 +1,7 @@
-const { clone } = require('./generic');
+const { repeatString, clone } = require('./generic');
+
+const OFF = '.'
+const ON = '#'
 
 function parseInput(lines) {
   lines = clone(lines); // not to be destructive
@@ -8,15 +11,23 @@ function parseInput(lines) {
   return [initial, rules];
 }
 
+function convertFromString(s, delta) {
+  const nums = s.split('').map((char, i) => {
+    return (char === ON ? i + delta : 0);
+  })
+  return new Set(nums);
+}
+
+function convertToString(map) {
+  const ons = Array.from(map);
+  ons.sort();
+}
+
 function nextGeneration(gen, rules) {
-  gen = '..' + gen + '..';
   const nextGen = [];
   for (let i = 0; i < gen.length - 4; ++i) {
     const neighbours = gen.substring(i, i + 5);
-    let v = '.'; //neighbours[2];
-    // console.log(`----- #${i} was ${v}`);
-    // console.log('n', neighbours);
-    // console.log('v', v);
+    let v = '.';
     for (let [rule, result] of rules) {
       if (neighbours === rule) {
         v = result;
@@ -25,32 +36,40 @@ function nextGeneration(gen, rules) {
       }
     }
     nextGen.push(v);
-    // console.log('v_', v);
   }
-  return '.' + nextGen.join('') + '.';
+
+  return '..' + nextGen.join('') + '..';
 }
 
 function measure(g, n) {
   let sum = 0;
+  const delta = n;
   g.split('').forEach((ch, i) => {
     if (ch === '#') {
-      sum += i - n;
+      const j = i - delta;
+      sum += j
     }
   });
   return sum;
 }
 
 function question1(g, rules) {
-  for (let n = 0; n < 21; ++n) {
-    // console.log(g);
+  const steps = 20;
+
+  const pad = repeatString('.', steps);
+  g = pad + g + pad;
+
+  // console.log(g);
+  for (let n = 0; n < steps; ++n) {
     g = nextGeneration(g, rules);
+    // console.log(g);
   }
-  const sum = measure(g, 20);
+  const sum = measure(g, steps);
   // console.log(g, sum);
   return sum;
 }
 
-(function() {
+(function () {
   let g = '#..#.#..##......###...###';
   const rules = [
     ['...##', '#'],
@@ -69,7 +88,7 @@ function question1(g, rules) {
     ['####.', '#']
   ];
 
-  //question1(g, rules);
+  // question1(g, rules);
 })();
 
-module.exports = { parseInput, nextGeneration, measure, question1 };
+module.exports = { parseInput, convertFromString, nextGeneration, measure, question1 };
