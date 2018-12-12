@@ -8,10 +8,11 @@ function parseLine(line) {
 }
 
 function missingDestinations(points, froms) {
-  froms.values.forEach((destinationArr) =>
-    destinationArr.forEach((to) => set.add(to))
+  const tos = new Set();
+  Array.from(froms.values()).forEach((destinationArr) =>
+    destinationArr.forEach((to) => tos.add(to))
   );
-  const missing = Array.from(points).filter((el) => !froms.has(el));
+  const missing = Array.from(points).filter((p) => !tos.has(p));
   missing.sort();
   return missing;
 }
@@ -36,30 +37,38 @@ function question1(pairs) {
     bag.sort();
   } */
 
-  console.log('froms', froms);
-
   const result = [];
 
-  let nextCandidates = missingDestinations(points, froms);
+  let from = missingDestinations(points, froms);
+  //console.log('points', points);
   console.log('nextCandidates', nextCandidates);
   let from = nextCandidates.shift();
   result.push(from);
   let to;
   while (true) {
-    to = froms.get(from).shift();
-    if (!to) {
-      break;
-    }
-    result.push(to);
     console.log(froms);
 
+    if (!froms.has(from)) {
+      break;
+    }
+
+    to = froms.get(from).shift();
+    if (!to) {
+      froms.delete(from);
+      points.delete(from);
+      console.log(`- ${from}`);
+    } else {
+      console.log(`${from} -> ${to}`);
+      result.push(to);
+    }
+
     nextCandidates = missingDestinations(points, froms);
+    //console.log('points', points);
+    console.log('nextCandidates', nextCandidates);
     from = nextCandidates.shift();
   }
 
-  console.log(result);
-
-  return 'CABDFE';
+  return result.join('');
 }
 
 module.exports = { parseLine, question1 };
