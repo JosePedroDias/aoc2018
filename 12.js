@@ -11,92 +11,98 @@ function parseInput(lines) {
   return [initial, rules];
 }
 
-function convertFromString(s, delta) {
+function convertFromString(s, delta = 0) {
   const nums = s.split('').map((char, i) => {
     return char === ON ? i + delta : 0;
   });
   return new Set(nums);
 }
 
-function convertToString(map) {
+function convertRule(s) {
+  return s.split('').map((char) => char === ON);
+}
+
+function getLimits(map) {
   const ons = Array.from(map);
   ons.sort((a, b) => a - b);
   const min = ons[0];
   const max = ons[ons.length - 1];
+  return [min, max];
+}
+
+function convertToString(map) {
+  const [min, max] = getLimits(map);
   const arr = new Array(max - min + 1);
   for (let i = min; i <= max; ++i) {
     arr[i - min] = map.has(i) ? ON : OFF;
   }
-  return arr.join('');
+  return [arr.join(''), min];
 }
 
 function nextGeneration(gen, rules) {
-  const nextGen = [];
-  for (let i = 0; i < gen.length - 4; ++i) {
-    const neighbours = gen.substring(i, i + 5);
-    let v = '.';
-    for (let [rule, result] of rules) {
-      if (neighbours === rule) {
-        v = result;
-        // console.log(`matched rule ${rule} => ${result}`);
-        break;
-      }
-    }
-    nextGen.push(v);
-  }
+  const nextGen = new Set();
+  const [min, max] = getLimits(gen);
 
-  return '..' + nextGen.join('') + '..';
+  for (let i = min - 2; i <= max + 2; ++i) {
+    let result;
+    rules.some(([a, b]) => {
+      /* console.log(i, 'rule', a, b);
+      console.log('part', [
+        gen.has(i - 2),
+        gen.has(i - 1),
+        gen.has(i),
+        gen.has(i + 1),
+        gen.has(i + 2)
+      ]); */
+      for (let j = -2; j <= 2; ++j) {
+        const bool = a[j + 2];
+        const cell = gen.has(i + j);
+        const fails = bool !== cell;
+        /* console.log(
+          `i:${i}, j:${j} ~> bool:${bool}, cell:${cell}, fails:${fails}`
+        ); */
+        if (fails) {
+          return;
+        }
+      }
+      result = b;
+      // console.log('MATCHED RULE');
+      return true;
+    });
+    if (result) {
+      nextGen.add(i);
+    }
+  }
+  return nextGen;
 }
 
-function measure(g, n) {
+function measure(g) {
+  const arr = Array.from(g);
   let sum = 0;
-  const delta = n;
-  g.split('').forEach((ch, i) => {
-    if (ch === '#') {
-      const j = i - delta;
-      sum += j;
-    }
-  });
+  arr.forEach((n) => (sum += n));
   return sum;
 }
 
-function question1(g, rules) {
-  const steps = 20;
+function prepareInput(g, rules) {
+  g = convertFromString(g, 0);
+  rules = rules.map(([a, b]) => {
+    return [convertRule(a), b === ON];
+  });
+  return [g, rules];
+}
 
-  const pad = repeatString('.', steps);
-  g = pad + g + pad;
+function question1(g_, rules_, steps = 20) {
+  let [g, rules] = prepareInput(g_, rules_);
 
-  // console.log(g);
+  // console.log(convertToString(g));
   for (let n = 0; n < steps; ++n) {
     g = nextGeneration(g, rules);
-    // console.log(g);
+    // console.log(convertToString(g));
   }
-  const sum = measure(g, steps);
+  const sum = measure(g);
   // console.log(g, sum);
   return sum;
 }
-
-(function() {
-  let g = '#..#.#..##......###...###';
-  const rules = [
-    ['...##', '#'],
-    ['..#..', '#'],
-    ['.#...', '#'],
-    ['.#.#.', '#'],
-    ['.#.##', '#'],
-    ['.##..', '#'],
-    ['.####', '#'],
-    ['#.#.#', '#'],
-    ['#.###', '#'],
-    ['##.#.', '#'],
-    ['##.##', '#'],
-    ['###..', '#'],
-    ['###.#', '#'],
-    ['####.', '#']
-  ];
-
-  // question1(g, rules);
-})();
 
 module.exports = {
   parseInput,
