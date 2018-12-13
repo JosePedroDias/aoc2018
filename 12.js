@@ -1,4 +1,4 @@
-const { repeatString, clone } = require('./generic');
+const { tickProgress, clone } = require('./generic');
 
 const OFF = '.';
 const ON = '#';
@@ -97,6 +97,9 @@ function question1(g_, rules_, steps = 20) {
   // console.log(convertToString(g));
   for (let n = 0; n < steps; ++n) {
     g = nextGeneration(g, rules);
+    // if (n % 10 === 0) {
+    // tickProgress((n + 1) / steps);
+    // }
     // console.log(convertToString(g));
   }
   const sum = measure(g);

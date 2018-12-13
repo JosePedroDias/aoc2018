@@ -70,6 +70,34 @@ function clone(o) {
   return JSON.parse(JSON.stringify(o));
 }
 
+let startTs = undefined;
+function tickProgress(ratio) {
+  const nowTs = Date.now();
+  if (ratio === 0 || !startTs) {
+    startTs = nowTs;
+    return;
+  }
+  const percentage = Math.round(ratio * 10000) / 100;
+  const tsSoFar = nowTs - startTs;
+  const estimateDurTs = tsSoFar / ratio;
+  const estimateEndTs = startTs + estimateDurTs;
+  const eta = ratio === 0 ? '---' : new Date(estimateEndTs).toString();
+
+  let ts = estimateDurTs;
+  const hours = Math.floor(ts / 3600000);
+  ts -= hours * 3600000;
+  const mins = Math.floor(ts / 60000);
+  ts -= mins * 60000;
+  const secs = Math.floor(ts / 1000);
+  const estDur = `${hours}h ${mins}min ${secs}secs`;
+
+  console.log(
+    `progress: ${percentage.toFixed(
+      2
+    )}%, est. duration: ${estDur}, est. finish: ${eta}`
+  );
+}
+
 class Matrix {
   constructor(w, h, dx = 0, dy = 0, defaultChar = ' ') {
     this.lines = new Array(h);
@@ -212,5 +240,6 @@ module.exports = {
   repeatString,
   padWith,
   clone,
+  tickProgress,
   Matrix
 };

@@ -8,6 +8,7 @@ const {
   combinations22,
   repeatString,
   padWith,
+  tickProgress,
   Matrix
 } = require('./generic');
 
@@ -70,6 +71,21 @@ it('repeatString', () => {
 
 it('padWith', () => {
   expect(padWith('..', 4, '*')).toBe('**..');
+});
+
+fit('tickProgress', (onDone) => {
+  let counter = 0;
+  const MAX = 10; // 10*250 = 2.5s
+  function onTick() {
+    tickProgress(counter / MAX);
+    if (counter === MAX) {
+      clearInterval(onTick);
+      onDone();
+    }
+    ++counter;
+  }
+  const timer = setInterval(onTick, 250);
+  onTick();
 });
 
 describe('matrix class', () => {

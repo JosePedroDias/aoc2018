@@ -103,7 +103,9 @@ it('question 1', () => {
 });
 
 fit('question 2', () => {
-  const [init, rules] = parseInput(EXAMPLE_LINES);
+  // console.log('a');
+  const [init, rules] = parseInput(LINES);
+  // console.log('x');
   const sum = question1(init, rules, 50000000000);
   expect(sum).toBe(325);
 });
