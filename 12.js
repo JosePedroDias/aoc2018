@@ -91,15 +91,38 @@ function prepareInput(g, rules) {
   return [g, rules];
 }
 
+let lhMap = new Map();
+
+function resetLogHistory() {
+  lhMap = new Map();
+}
+
+// receives input and stepNr
+// returns nr iif input already happened before
+function addToLogHistory(input, stepNr) {
+  if (lhMap.has(input)) {
+    return lhMap.get(input);
+  }
+  lhMap.set(input, stepNr);
+}
+
 function question1(g_, rules_, steps = 20) {
   let [g, rules] = prepareInput(g_, rules_);
 
   // console.log(convertToString(g));
   for (let n = 0; n < steps; ++n) {
     g = nextGeneration(g, rules);
-    // if (n % 10 === 0) {
-    // tickProgress((n + 1) / steps);
-    // }
+
+    // detecting history repeating itself... Thx Salavisa!
+    const repeatingStepN = addToLogHistory(g, n);
+    if (isFinite(repeatingStepN)) {
+      throw `${n} is repeating ${repeatingStepN}!`;
+    }
+
+    if (n % 10000 === 0) {
+      console.log(`${n + 1} / ${steps}`);
+      tickProgress((n + 1) / steps);
+    }
     // console.log(convertToString(g));
   }
   const sum = measure(g);
@@ -113,5 +136,7 @@ module.exports = {
   convertToString,
   nextGeneration,
   measure,
-  question1
+  question1,
+  resetLogHistory,
+  addToLogHistory
 };
