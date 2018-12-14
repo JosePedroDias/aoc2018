@@ -123,6 +123,30 @@ function printScreen({ dimensions: [W, H], circuits, intersections, cars }) {
   return m.toString();
 }
 
-function nextStep() {}
+function carSort([a0, a1, a2], [b0, b1, b2]) {
+  if (a1 < b1) {
+    return -1;
+  } else if (a1 > b1) {
+    return 1;
+  } else {
+    if (a0 < b0) {
+      return -1;
+    }
+    if (a0 > b0) {
+      return 1;
+    }
+  }
+  return 0;
+}
 
-module.exports = { parseInput, printScreen, nextStep };
+// in-place
+function sortCars(cars) {
+  cars.sort(carSort);
+  return cars;
+}
+
+function nextStep({ dimensions: [W, H], circuits, intersections, cars }) {
+  // TODO
+}
+
+module.exports = { parseInput, printScreen, sortCars, nextStep };

@@ -1,4 +1,4 @@
-const { parseInput, printScreen, nextStep } = require('./13');
+const { parseInput, printScreen, sortCars, nextStep } = require('./13');
 const { fileAsLines } = require('./generic');
 
 const LINES = fileAsLines('./13.input.txt');
@@ -28,6 +28,12 @@ it('printScreen', () => {
     cars: [[2, 0, 0], [9, 3, 3]]
   };
   expect(printScreen(st)).toEqual(EXAMPLE_LINES.join('\n'));
+});
+
+it('sortCars', () => {
+  const cars0 = [[2, 0, 0], [7, 11, 1], [9, 3, 3]];
+  const cars1 = [[2, 0, 0], [9, 3, 3], [7, 11, 1]];
+  expect(sortCars(cars0)).toEqual(cars1);
 });
 
 it('nextStep', () => {});
